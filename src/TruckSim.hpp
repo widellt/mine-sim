@@ -14,7 +14,12 @@ class TruckSimulation {
         }
 
         void simulate(){
-            // TODO
+
+            // Add start time using current time for simulation
+
+            // Continue in while loop until we reach end time
+
+                // Process all trucks in simulation
         }
 
 };
