@@ -1,3 +1,4 @@
+#pragma once
 #include <random>
 
 // Enum to represent the simplified state of a mining truck
