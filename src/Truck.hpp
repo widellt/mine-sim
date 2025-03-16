@@ -65,8 +65,16 @@ public:
         m_state = newState;
     }
 
+    float getMiningTimeLeft() const {
+        return m_miningTimeLeft;
+    }
+
     float getMiningTimeTotal() const {
         return m_miningTimeTotal;
+    }
+
+    float getUnloadTimeLeft() const {
+        return m_unloadTimeLeft;
     }
 
     float getUnloadTimeTotal() const {

@@ -6,7 +6,6 @@ class Station {
     private:
     int m_id;
     float m_dt;
-    bool m_isOccupied = false;
     float m_timeOccupied = 0.0f;
     float m_timeRemaining = 0.0f;
     Truck* m_truckInStation = nullptr;
@@ -44,13 +43,15 @@ class Station {
         if(m_truckInStation != nullptr){
             // Update how long a specific truck has been in a station and total time station has been occupied
             m_truckTimes[m_truckInStation->getId()] += m_dt;
-            m_timeOccupied += m_dt;
-            m_timeRemaining -= m_dt;
 
             // If the truck is done unloading, remove it from the station and transition its state
-            if(m_timeRemaining <= 0){
+            if(m_truckInStation->getUnloadTimeLeft() <= 0){
                 // m_truckInStation->setState(TruckState::TRAVELING_TO_SITE);
+                m_truckInStation->setHasStation(false);
                 m_truckInStation = nullptr;
+            }
+            else{
+                m_timeOccupied += m_dt;
             }
         }
     }
