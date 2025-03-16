@@ -6,7 +6,8 @@ enum class TruckState {
     MINING,
     TRAVELING_TO_STATION,
     UNLOADING, // Simplified unloading without stations
-    TRAVELING_TO_SITE
+    TRAVELING_TO_SITE,
+    IDLE
 };
 
 class Truck {
@@ -21,6 +22,7 @@ class Truck {
     float m_unloadTimeTotal = 0;
     float m_travelTimeLeft;
     float m_travelTimeTotal = 0;
+    float m_timeWaiting = 0;
     uint32_t m_tripsCompleted;
 
     bool m_isUnloading;
@@ -45,7 +47,7 @@ public:
         m_isMining(true)
     {
         // Initialize with random mining time (1-5 hours)
-        m_miningTimeLeft = getRandomMiningTime();
+        m_miningTimeLeft = (int)getRandomMiningTime() / m_dt;
     }
 
     int getId() const {
@@ -91,7 +93,7 @@ public:
                     m_state = TruckState::TRAVELING_TO_STATION;
                     m_isMining = false;
                     m_isTravelingToStation = true;
-                    m_miningTimeLeft = getRandomMiningTime() / m_dt;
+                    m_miningTimeLeft = (int)getRandomMiningTime() / m_dt;
                     m_travelTimeLeft = TRAVEL_TIME / m_dt;
                 }
                 break;
@@ -123,6 +125,9 @@ public:
                     m_isTravelingToSite = false;
                     m_isMining = true;
                 }    
+                break;
+            case TruckState::IDLE:
+                m_timeWaiting += m_dt;
                 break;
         }
     }
