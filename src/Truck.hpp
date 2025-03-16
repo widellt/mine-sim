@@ -29,14 +29,16 @@ class Truck {
     bool m_isTravelingToSite;
     bool m_isTravelingToStation;
     bool m_isMining;
+    bool m_hasStation;
     static constexpr float TRAVEL_TIME = 1800.0f;
-    static constexpr float UNLOAD_TIME = 300.0f;
     static constexpr float HRS_TO_SECS = 3600.0f;
     static constexpr float MINE_TIME_MAX = 5.0f;
     static constexpr float MINE_TIME_MIN = 1.0f;
 
     
 public:
+    static constexpr float UNLOAD_TIME = 300.0f;
+
     Truck(int truckId, float dt) : 
         m_id(truckId), 
         m_dt(dt),
@@ -44,7 +46,8 @@ public:
         m_isUnloading(false), 
         m_isTravelingToSite(false), 
         m_isTravelingToStation(false),
-        m_isMining(true)
+        m_isMining(true),
+        m_hasStation(false)
     {
         // Initialize with random mining time (1-5 hours)
         m_miningTimeLeft = (int)getRandomMiningTime() / m_dt;
@@ -74,6 +77,14 @@ public:
         return m_travelTimeTotal;
     }
 
+    bool hasStation() const {
+        return m_hasStation;
+    }
+
+    void setHasStation(bool newState) {
+        m_hasStation = newState;
+    }
+
     float getRandomMiningTime() {
         std::random_device rd;
         std::mt19937 gen(rd());
@@ -82,7 +93,8 @@ public:
         return (miningDist(gen) * HRS_TO_SECS);
     }
 
-    void updateState() {
+    // Main function to call on each timestep for individual trucks
+    void update() {
         // Update the state of the truck based on its current state and reset random mining time
 
         switch(m_state) {
@@ -112,6 +124,7 @@ public:
                 m_unloadTimeTotal += m_dt;
                 if (m_unloadTimeLeft <= 0) {
                     m_state = TruckState::TRAVELING_TO_SITE;
+                    // We want the unload station to set the transition from unload to traveling to the site
                     m_isUnloading = false;
                     m_isTravelingToSite = true;
                     m_travelTimeLeft = TRAVEL_TIME / m_dt;
