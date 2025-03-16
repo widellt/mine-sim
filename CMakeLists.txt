@@ -14,10 +14,10 @@ else()
 endif()
 
 # Add executables for each step
-add_executable(step1_trucks_only src/step1-mining-trucks-only.cpp)
+add_executable(sim src/main.cpp)
 
 # Add the main final executable
-add_executable(lunar_mining_sim src/step1-mining-trucks-only.cpp)
+add_executable(lunar_mining_sim src/main.cpp)
 
 # Create an install target
 install(TARGETS lunar_mining_sim
