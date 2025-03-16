@@ -77,7 +77,7 @@ public:
         std::mt19937 gen(rd());
         std::uniform_real_distribution<> miningDist(MINE_TIME_MIN, MINE_TIME_MAX);
 
-        return (miningDist(gen) * HRS_TO_SECS) / m_dt;
+        return (miningDist(gen) * HRS_TO_SECS);
     }
 
     void updateState() {
@@ -91,8 +91,8 @@ public:
                     m_state = TruckState::TRAVELING_TO_STATION;
                     m_isMining = false;
                     m_isTravelingToStation = true;
-                    m_miningTimeLeft = getRandomMiningTime();
-                    m_travelTimeLeft = TRAVEL_TIME;
+                    m_miningTimeLeft = getRandomMiningTime() / m_dt;
+                    m_travelTimeLeft = TRAVEL_TIME / m_dt;
                 }
                 break;
             case TruckState::TRAVELING_TO_STATION:
@@ -102,7 +102,7 @@ public:
                     m_state = TruckState::UNLOADING;
                     m_isTravelingToStation = false;
                     m_isUnloading = true;
-                    m_unloadTimeLeft = UNLOAD_TIME;
+                    m_unloadTimeLeft = UNLOAD_TIME / m_dt;
                 }
                 break;
             case TruckState::UNLOADING:
@@ -112,7 +112,7 @@ public:
                     m_state = TruckState::TRAVELING_TO_SITE;
                     m_isUnloading = false;
                     m_isTravelingToSite = true;
-                    m_travelTimeLeft = TRAVEL_TIME;
+                    m_travelTimeLeft = TRAVEL_TIME / m_dt;
                 }
                 break;
             case TruckState::TRAVELING_TO_SITE:
