@@ -7,7 +7,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/lunar_mining_sim",
             "args": ["--run-sim", "--", "-t", "1", "-s", "1", "-v"],
-            "stopAtEntry": false,
+            "stopAtEntry": true,
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
