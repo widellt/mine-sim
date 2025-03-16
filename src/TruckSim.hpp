@@ -12,8 +12,8 @@ class TruckSim {
         std::vector<Truck> m_trucks;
         std::vector<Station> m_unloadStations;
         std::queue<Truck> m_waitingLine;
-        int m_numTrucks;
-        int m_numStations;
+        uint32_t m_numTrucks;
+        uint32_t m_numStations;
         double m_currTime = 0;
         static constexpr float dt = 1.0f; //s
         static constexpr float SIMULATION_DURATION = 259200.0f / dt;
@@ -44,7 +44,7 @@ class TruckSim {
 
                 m_currTime+=dt;
                 // Process all trucks in simulation
-                for (int i = 0; i < m_numTrucks; i++){
+                for (uint32_t i = 0; i < m_numTrucks; i++){
                     m_trucks[i].updateState();
                 }
             }
@@ -53,7 +53,7 @@ class TruckSim {
 
         void printTruckStats(){
             std::cout << "Truck Stats:" << std::endl;
-            for (int i = 0; i < m_numTrucks; i++){
+            for (uint32_t i = 0; i < m_numTrucks; i++){
                 std::cout << "Truck ID " << m_trucks[i].getId() << std::endl;
                 std::cout << "Mining Time Total: " << m_trucks[i].getMiningTimeTotal() << std::endl;
                 std::cout << "Unload Time Total: " << m_trucks[i].getUnloadTimeTotal() << std::endl;
