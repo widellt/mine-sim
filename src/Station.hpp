@@ -42,7 +42,6 @@ class Station {
     void update() {
         if(m_truckInStation != nullptr){
             // Update how long a specific truck has been in a station and total time station has been occupied
-            m_truckTimes[m_truckInStation->getId()] += m_dt;
 
             // If the truck is done unloading, remove it from the station and transition its state
             if(m_truckInStation->getUnloadTimeLeft() <= 0){
@@ -51,6 +50,7 @@ class Station {
                 m_truckInStation = nullptr;
             }
             else{
+                m_truckTimes[m_truckInStation->getId()] += m_dt;
                 m_timeOccupied += m_dt;
             }
         }
