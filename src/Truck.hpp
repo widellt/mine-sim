@@ -27,6 +27,11 @@ class Truck {
     bool m_isTravelingToSite;
     bool m_isTravelingToStation;
     bool m_isMining;
+    static constexpr float TRAVEL_TIME = 1800.0f;
+    static constexpr float UNLOAD_TIME = 300.0f;
+    static constexpr float HRS_TO_SECS = 3600.0f;
+    static constexpr float MINE_TIME_MAX = 5.0f;
+    static constexpr float MINE_TIME_MIN = 1.0f;
 
     
 public:
@@ -70,9 +75,9 @@ public:
     float getRandomMiningTime() {
         std::random_device rd;
         std::mt19937 gen(rd());
-        std::uniform_real_distribution<> miningDist(1.0, 5.0);
+        std::uniform_real_distribution<> miningDist(MINE_TIME_MIN, MINE_TIME_MAX);
 
-        return (miningDist(gen) * 3600.0f) / m_dt;
+        return (miningDist(gen) * HRS_TO_SECS) / m_dt;
     }
 
     void updateState() {
@@ -87,7 +92,7 @@ public:
                     m_isMining = false;
                     m_isTravelingToStation = true;
                     m_miningTimeLeft = getRandomMiningTime();
-                    m_travelTimeLeft = 30.0f;
+                    m_travelTimeLeft = TRAVEL_TIME;
                 }
                 break;
             case TruckState::TRAVELING_TO_STATION:
@@ -97,7 +102,7 @@ public:
                     m_state = TruckState::UNLOADING;
                     m_isTravelingToStation = false;
                     m_isUnloading = true;
-                    m_unloadTimeLeft = 5.0f;
+                    m_unloadTimeLeft = UNLOAD_TIME;
                 }
                 break;
             case TruckState::UNLOADING:
@@ -107,7 +112,7 @@ public:
                     m_state = TruckState::TRAVELING_TO_SITE;
                     m_isUnloading = false;
                     m_isTravelingToSite = true;
-                    m_travelTimeLeft = 30.0f;
+                    m_travelTimeLeft = TRAVEL_TIME;
                 }
                 break;
             case TruckState::TRAVELING_TO_SITE:

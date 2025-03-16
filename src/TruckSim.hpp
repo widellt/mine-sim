@@ -15,10 +15,8 @@ class TruckSim {
         int m_numTrucks;
         int m_numStations;
         double m_currTime = 0;
-        static constexpr float TRAVEL_TIME = 1800.0f; //s, 30 min to mining site from unload station
-        static constexpr float UNLOAD_TIME = 300.0f; //s, 5 min to unload
-        static constexpr float SIMULATION_DURATION = 259200.0f;
         static constexpr float dt = 1.0f; //s
+        static constexpr float SIMULATION_DURATION = 259200.0f / dt;
 
     public:
         TruckSim(int numTrucks, int numStations) : 
