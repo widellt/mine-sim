@@ -19,8 +19,8 @@ The purpose of this simulator is to provide a statistical analysis of an N numbe
 # Build in Release mode (optimized)
 ./build.sh --release
 
-# Build and run tests
-./build.sh --test
+# Build and run unit tests
+./build.sh --unit-test
 
 # Clean build and rebuild
 ./build.sh --clean

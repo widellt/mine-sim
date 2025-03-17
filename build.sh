@@ -19,11 +19,7 @@ do
       BUILD_TYPE="Release"
       shift
       ;;
-    -t|--test)
-      RUN_TESTS=true
-      shift
-      ;;
-    --unit-tests)
+    -u|--unit-tests)
       RUN_UNIT_TESTS=true
       shift
       ;;
@@ -39,7 +35,7 @@ do
       echo "Usage: $0 [options] [-- sim_args]"
       echo "Options:"
       echo "  -r, --release    Build in Release mode (default: Debug)"
-      echo "  -t, --test       Run tests after building"
+      echo "  -u, --unit-tests Run unit tests after building"
       echo "  -c, --clean      Clean build directory before building"
       echo "  -s, --run-sim    Run the simulation after building"
       echo "  -h, --help       Show this help message"
@@ -81,12 +77,6 @@ fi
 #Build the project
 echo "Building project..."
 cmake --build . -- -j "$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 2)"
-
-#Run tests if requested
-if [ "$RUN_TESTS" = true ]; then
-  echo "Running tests..."
-  ctest -V
-fi
 
 # Run unit tests if requested
 if [ "$RUN_UNIT_TESTS" = true ]; then
