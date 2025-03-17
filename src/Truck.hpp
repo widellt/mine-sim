@@ -5,7 +5,7 @@
 enum class TruckState {
   MINING,
   TRAVELING_TO_STATION,
-  UNLOADING, // Simplified unloading without stations
+  UNLOADING,
   TRAVELING_TO_SITE,
   IDLE
 };

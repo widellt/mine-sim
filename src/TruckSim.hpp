@@ -8,7 +8,6 @@
 
 class TruckSim {
 private:
-  // Let's assume one truck and one unload station to begin with
   std::vector<Truck> m_trucks;
   std::vector<Station> m_unloadStations;
   std::queue<Truck> m_waitingLine;
@@ -22,11 +21,13 @@ public:
   TruckSim(int numTrucks, int numStations)
       : m_numTrucks(numTrucks), m_numStations(numStations) {
     // Initialize trucks and unload stations
+    m_trucks.reserve(numTrucks);
+    m_unloadStations.reserve(numStations);
     for (int i = 0; i < numTrucks; i++) {
-      m_trucks.push_back(Truck(i, dt));
+      m_trucks.emplace_back(Truck(i, dt));
     }
     for (int i = 0; i < numStations; i++) {
-      m_unloadStations.push_back(Station(i, dt));
+      m_unloadStations.emplace_back(Station(i, dt));
     }
   }
 
