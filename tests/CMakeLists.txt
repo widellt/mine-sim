@@ -1,6 +1,7 @@
 set(TEST_SOURCES
     TruckTests.cpp
     StationTests.cpp
+    SimTests.cpp
 )
 
 # Add test executable

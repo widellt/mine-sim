@@ -30,6 +30,9 @@ public:
     }
   }
 
+  uint32_t getNumTrucks() { return m_numTrucks; }
+  uint32_t getNumStations() { return m_numStations; }
+
   void simulate() {
 
     // Continue in while loop until we reach end time in increments of dt

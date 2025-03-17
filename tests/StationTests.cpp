@@ -4,27 +4,16 @@
 
 class StationTest : public ::testing::Test {
 protected:
+
+    float dt = 1.0f;
     void SetUp() override {
         // Set up a fresh station for each test
-        station = new Station(1, 1);
-        
-        // Set up some trucks for queue testing
-        truck1 = new Truck(1, 1);
-        truck2 = new Truck(2, 1);
-        truck3 = new Truck(3, 1);
+        station = new Station(1, dt);
     }
-
     void TearDown() override {
         delete station;
-        delete truck1;
-        delete truck2;
-        delete truck3;
     }
-
     Station* station;
-    Truck* truck1;
-    Truck* truck2;
-    Truck* truck3;
 };
 
 // Test station initialization
