@@ -31,3 +31,4 @@ The purpose of this simulator is to provide a statistical analysis of an N numbe
 # Build dependencies
 GDB
 G++ 11.4.0
+clang-format

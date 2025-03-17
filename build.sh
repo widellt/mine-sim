@@ -1,16 +1,17 @@
-#!/bin/bash
+#!/ bin / bash
 
-# Script to build and run the Lunar Mining Simulation
+#Script to build and run the Lunar Mining Simulation
 
-# Default build type
+#Default build type
 BUILD_TYPE="Debug"
 RUN_TESTS=false
 CLEAN_BUILD=false
 RUN_SIM=false
 SIM_ARGS=""
 
-# Parse command line arguments
-for arg in "$@"; do
+#Parse command line arguments
+for arg in "$@";
+do
   case $arg in
     -r|--release)
       BUILD_TYPE="Release"
@@ -52,7 +53,7 @@ for arg in "$@"; do
   esac
 done
 
-# Create build directory if it doesn't exist
+#Create build directory if it doesn't exist
 BUILD_DIR="build"
 if [ ! -d "$BUILD_DIR" ] || [ "$CLEAN_BUILD" = true ]; then
   echo "Creating/cleaning build directory..."
@@ -60,24 +61,24 @@ if [ ! -d "$BUILD_DIR" ] || [ "$CLEAN_BUILD" = true ]; then
   mkdir -p "$BUILD_DIR"
 fi
 
-# Navigate to build directory
+#Navigate to build directory
 cd "$BUILD_DIR" || { echo "Failed to enter build directory"; exit 1; }
 
-# Configure with CMake
+#Configure with CMake
 echo "Configuring project with CMake (Build type: $BUILD_TYPE)..."
 cmake -DCMAKE_BUILD_TYPE="$BUILD_TYPE" ..
 
-# Build the project
+#Build the project
 echo "Building project..."
 cmake --build . -- -j "$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 2)"
 
-# Run tests if requested
+#Run tests if requested
 if [ "$RUN_TESTS" = true ]; then
   echo "Running tests..."
   ctest -V
 fi
 
-# Run simulation if requested
+#Run simulation if requested
 if [ "$RUN_SIM" = true ]; then
   echo "Running simulation with arguments: $SIM_ARGS"
   ./lunar_mining_sim $SIM_ARGS
