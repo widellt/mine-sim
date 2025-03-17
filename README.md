@@ -29,6 +29,7 @@ The purpose of this simulator is to provide a statistical analysis of an N numbe
 ./build.sh --run-sim -- -t 10 -s 3 -v
 
 # Build dependencies
+CMake 3.10
 GDB
 G++ 11.4.0
 clang-format
