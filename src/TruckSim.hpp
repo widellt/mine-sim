@@ -62,7 +62,6 @@ class TruckSim {
                             }
                             else{
                                 truck.setState(TruckState::IDLE);
-                                Logger::LOGI("Truck " + std::to_string(truck.getId()) + " is idle");
                             }
                         }
                     }
