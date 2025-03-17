@@ -1,4 +1,4 @@
-#!/ bin / bash
+#! /bin/bash
 
 #Script to build and run the Lunar Mining Simulation
 
