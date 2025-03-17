@@ -27,12 +27,13 @@ TEST_F(TruckTest, Initialization) {
 TEST_F(TruckTest, MiningToTravelingTransition) {
     // Force mining time to be almost finished
     float initialMiningTime = truck->getMiningTimeLeft();
+    // Total time should be 0 at sim start
+    EXPECT_EQ(truck->getMiningTimeTotal(), 0);
     float lastMiningTime = initialMiningTime;
     
     // Simulate time passing until mining is done
     while (true) {
         lastMiningTime = truck->getMiningTimeLeft();
-        std::cout << "Mining Time Left " << truck->getMiningTimeLeft() << std::endl;
         truck->update();
         // Truck will reset its mining time when it finishes, break if last time > new
         if(truck->getMiningTimeLeft() > lastMiningTime) {
@@ -42,5 +43,8 @@ TEST_F(TruckTest, MiningToTravelingTransition) {
     
     // Should transition to traveling to station
     EXPECT_EQ(truck->getState(), TruckState::TRAVELING_TO_STATION);
-    EXPECT_GT(truck->getMiningTimeTotal(), 0.0f);
+    // Total time should equate to initial time
+    EXPECT_EQ(truck->getMiningTimeTotal(), initialMiningTime);
 }
+
+// Rest of state transition tests would go here...
