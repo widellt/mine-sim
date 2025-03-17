@@ -1,10 +1,12 @@
 #! /bin/bash
 
-#Script to build and run the Lunar Mining Simulation
+# Script to build and run the Lunar Mining Simulation with GTest support
 
 #Default build type
 BUILD_TYPE="Debug"
 RUN_TESTS=false
+BUILD_UNIT_TESTS=true  # Default to building unit tests
+RUN_UNIT_TESTS=false   # Option to run unit tests
 CLEAN_BUILD=false
 RUN_SIM=false
 SIM_ARGS=""
@@ -19,6 +21,10 @@ do
       ;;
     -t|--test)
       RUN_TESTS=true
+      shift
+      ;;
+    --unit-tests)
+      RUN_UNIT_TESTS=true
       shift
       ;;
     -c|--clean)
@@ -68,6 +74,10 @@ cd "$BUILD_DIR" || { echo "Failed to enter build directory"; exit 1; }
 echo "Configuring project with CMake (Build type: $BUILD_TYPE)..."
 cmake -DCMAKE_BUILD_TYPE="$BUILD_TYPE" ..
 
+if [ "$BUILD_UNIT_TESTS" = false ]; then
+  CMAKE_ARGS="$CMAKE_ARGS -DBUILD_TESTS=OFF"
+fi
+
 #Build the project
 echo "Building project..."
 cmake --build . -- -j "$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 2)"
@@ -76,6 +86,16 @@ cmake --build . -- -j "$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || e
 if [ "$RUN_TESTS" = true ]; then
   echo "Running tests..."
   ctest -V
+fi
+
+# Run unit tests if requested
+if [ "$RUN_UNIT_TESTS" = true ]; then
+  echo "Running unit tests..."
+  
+  # Run all unit tests
+  ./tests/unit_tests
+
+  echo "Unit tests completed successfully."
 fi
 
 #Run simulation if requested

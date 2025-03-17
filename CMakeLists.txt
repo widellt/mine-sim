@@ -13,6 +13,9 @@ else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -g")
 endif()
 
+# Option to build tests
+option(BUILD_TESTS "Build the unit tests" ON)
+
 # Add the main final executable
 add_executable(lunar_mining_sim src/main.cpp)
 
@@ -30,3 +33,27 @@ add_test(NAME BasicSimulationTest
 # Add a test to run parameter analysis
 add_test(NAME ParameterAnalysisTest
          COMMAND lunar_mining_sim --analyze)
+
+# Setup GTest
+if(BUILD_TESTS)
+    # Fetch GTest
+    include(FetchContent)
+    FetchContent_Declare(
+        googletest
+        GIT_REPOSITORY https://github.com/google/googletest.git
+        GIT_TAG release-1.12.1
+    )
+    
+    # For Windows: Prevent overriding the parent project's compiler/linker settings
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    FetchContent_MakeAvailable(googletest)
+
+    # Enable testing with CTest
+    include(GoogleTest)
+
+    # Create the test directory
+    file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests)
+    
+    # Add the test subdirectory
+    add_subdirectory(tests)
+endif()
