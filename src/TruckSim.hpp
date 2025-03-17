@@ -47,6 +47,12 @@ public:
       for (auto &truck : m_trucks) {
         truck.update();
 
+        // Early skip if truck doesn't need a station
+        if (truck.hasStation() || (truck.getState() != TruckState::UNLOADING && 
+            truck.getState() != TruckState::IDLE)) {
+          continue;
+        }
+
         // If a truck is ready to unload and there is an available unload
         // station then assign the truck to the unload station
         if ((truck.getState() == TruckState::UNLOADING ||
