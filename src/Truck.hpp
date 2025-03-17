@@ -22,7 +22,7 @@ class Truck {
     float m_unloadTimeTotal = 0;
     float m_travelTimeLeft;
     float m_travelTimeTotal = 0;
-    float m_timeWaiting = 0;
+    float m_idleTimeTotal = 0;
     uint32_t m_tripsCompleted;
 
     bool m_isUnloading;
@@ -83,6 +83,10 @@ public:
 
     float getTravelTimeTotal() const {
         return m_travelTimeTotal;
+    }
+
+    float getIdleTimeTotal() const {
+        return m_idleTimeTotal;
     }
 
     bool hasStation() const {
@@ -148,7 +152,7 @@ public:
                 }    
                 break;
             case TruckState::IDLE:
-                m_timeWaiting += m_dt;
+                m_idleTimeTotal += m_dt;
                 break;
         }
     }

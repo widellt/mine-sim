@@ -4,6 +4,7 @@
 #include <iostream>
 #include "Truck.hpp"
 #include "Station.hpp"
+#include "Log.hpp"
 
 class TruckSim {
     private:
@@ -34,7 +35,7 @@ class TruckSim {
 
         void simulate(){
 
-            // Continue in while loop until we reach end time
+            // Continue in while loop until we reach end time in increments of dt
             while (m_currTime < SIMULATION_DURATION){
 
                 m_currTime+=dt;
@@ -48,15 +49,20 @@ class TruckSim {
 
                     // If a truck is ready to unload and there is an available unload station
                     // then assign the truck to the unload station
-                    if (truck.getState() == TruckState::UNLOADING && truck.hasStation() == false){
+                    if ((truck.getState() == TruckState::UNLOADING || truck.getState() == TruckState::IDLE) && truck.hasStation() == false){
                         for (auto& station : m_unloadStations){
                             if (station.getTruckInStation() == nullptr){
+                                // If truck was waiting and found station, move its state accordingly
+                                if (truck.getState() == TruckState::IDLE){
+                                    truck.setState(TruckState::UNLOADING);
+                                }
                                 truck.setHasStation(true);
                                 station.setTruckInStation(&truck);
                                 break;
                             }
                             else{
                                 truck.setState(TruckState::IDLE);
+                                Logger::LOGI("Truck " + std::to_string(truck.getId()) + " is idle");
                             }
                         }
                     }
@@ -67,7 +73,7 @@ class TruckSim {
         }
 
         void printTruckStats(){
-            std::cout << "Truck Stats:" << std::endl;
+            std::cout << "=== TRUCK STATISTICS ===" << std::endl;
             for (auto& truck : m_trucks){
                 std::cout << "Truck ID " << truck.getId() << std::endl;
 
@@ -75,8 +81,9 @@ class TruckSim {
                 std::cout << "Mining Time Total: " << truck.getMiningTimeTotal() * dt << "s" << std::endl;
                 std::cout << "Unload Time Total: " << truck.getUnloadTimeTotal() * dt << "s" << std::endl;
                 std::cout << "Travel Time Total: " << truck.getTravelTimeTotal() * dt << "s" << std::endl;
+                std::cout << "Idle Time Total: " << truck.getIdleTimeTotal() * dt << "s" << std::endl;
 
-                std::cout << "Total Time: " << (truck.getMiningTimeTotal() * dt) + (truck.getUnloadTimeTotal() * dt) + (truck.getTravelTimeTotal() * dt) << "s" << std::endl;
+                std::cout << "Total Time: " << (truck.getMiningTimeTotal() * dt) + (truck.getUnloadTimeTotal() * dt) + (truck.getTravelTimeTotal() * dt)  + (truck.getIdleTimeTotal() * dt) << "s" << std::endl;
                 std::cout << std::endl;
             }
         }
@@ -93,7 +100,6 @@ class TruckSim {
                     std::cout << "Truck ID: " << truck.first << " time: " << truck.second << std::endl;
                 }
             }
-            
         }
 
 };

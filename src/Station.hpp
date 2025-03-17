@@ -41,11 +41,11 @@ class Station {
     // Main function to call on each timestep for individual stations
     void update() {
         if(m_truckInStation != nullptr){
-            // Update how long a specific truck has been in a station and total time station has been occupied
+            // Update how long a specific truck has been in a station 
+            // and total time station has been occupied
 
-            // If the truck is done unloading, remove it from the station and transition its state
+            // If the truck is done unloading, remove it from the station and update its state
             if(m_truckInStation->getUnloadTimeLeft() <= 0){
-                // m_truckInStation->setState(TruckState::TRAVELING_TO_SITE);
                 m_truckInStation->setHasStation(false);
                 m_truckInStation = nullptr;
             }

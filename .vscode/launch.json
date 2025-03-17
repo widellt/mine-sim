@@ -6,7 +6,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/lunar_mining_sim",
-            "args": ["--run-sim", "--", "-t", "1", "-s", "1", "-v"],
+            "args": ["--run-sim", "--", "-t", "2", "-s", "1", "-v"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
