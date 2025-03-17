@@ -1,0 +1,7 @@
+# Build directories
+build/
+
+# Editor backup files
+*~
+*.swp
+*.swo
