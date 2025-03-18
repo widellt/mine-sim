@@ -33,3 +33,4 @@ CMake 3.10
 GDB
 G++ 11.4.0
 clang-format
+C++20
