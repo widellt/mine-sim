@@ -23,6 +23,9 @@ add_executable(lunar_mining_sim src/main.cpp)
 install(TARGETS lunar_mining_sim
         RUNTIME DESTINATION bin)
 
+# Link with threading library
+target_link_libraries(lunar_mining_sim ${CMAKE_THREAD_LIBS_INIT})
+
 # Enable testing
 enable_testing()
 
