@@ -25,8 +25,8 @@ The purpose of this simulator is to provide a statistical analysis of an N numbe
 # Clean build and rebuild
 ./build.sh --clean
 
-# Build and run the simulation with parameters
-./build.sh --run-sim -- -t 10 -s 3 -v
+# Build and run the simulation with parameters (e.g 10 trucks, 3 stations, verbose, pool of 20 threads)
+./build.sh --run-sim -- -t 10 -s 3 -v -p 20
 
 # Build dependencies
 CMake 3.10
