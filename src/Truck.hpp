@@ -30,13 +30,13 @@ class Truck {
   bool m_isTravelingToStation;
   bool m_isMining;
   bool m_hasStation;
-  static constexpr float TRAVEL_TIME = 1800.0f;
   static constexpr float HRS_TO_SECS = 3600.0f;
   static constexpr float MINE_TIME_MAX = 5.0f;
   static constexpr float MINE_TIME_MIN = 1.0f;
 
 public:
   static constexpr float UNLOAD_TIME = 300.0f;
+  static constexpr float TRAVEL_TIME = 1800.0f;
 
   Truck(int truckId, float dt)
       : m_id(truckId), m_dt(dt), m_state(TruckState::MINING),
@@ -47,27 +47,40 @@ public:
   }
 
   int getId() const { return m_id; }
-
+  /// \brief Retrieves the current state of the truck
   TruckState getState() const { return m_state; }
 
+  /// \brief Sets the state of the truck
   void setState(TruckState newState) { m_state = newState; }
 
+  /// \brief Retrieves the amount of time left until the truck is done mining
   float getMiningTimeLeft() const { return m_miningTimeLeft; }
 
+  /// \brief Retrieves the total amount of time the truck has spent mining
   float getMiningTimeTotal() const { return m_miningTimeTotal; }
-
+  
+  /// \brief Retrieves the amount of time left until the truck is done unloading
   float getUnloadTimeLeft() const { return m_unloadTimeLeft; }
 
+  /// \brief Retrieves the total amount of time the truck has spent unloading
   float getUnloadTimeTotal() const { return m_unloadTimeTotal; }
 
+  /// \brief Retrieves the total amount of time the truck has spent traveling
   float getTravelTimeTotal() const { return m_travelTimeTotal; }
 
+  /// \brief Retrieves the total amount of time the truck has spent waiting for a station
   float getIdleTimeTotal() const { return m_idleTimeTotal; }
 
+  /// \brief Retrieves the total number of trips the truck has completed
+  uint32_t getTripsCompleted() const { return m_tripsCompleted; }
+
+  /// \brief Retrieves the total amount of time the truck has spent idle
   bool hasStation() const { return m_hasStation; }
 
+  /// \brief Sets the state of the truckif it has a station
   void setHasStation(bool newState) { m_hasStation = newState; }
 
+  /// \brief Generates a random mining time
   float getRandomMiningTime() {
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -76,10 +89,8 @@ public:
     return (miningDist(gen) * HRS_TO_SECS);
   }
 
-  // Main function to call on each timestep for individual trucks
+  /// \brief Main function to call on each timestep for individual trucks
   void update() {
-    // Update the state of the truck based on its current state and reset random
-    // mining time
 
     switch (m_state) {
     case TruckState::MINING:

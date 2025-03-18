@@ -1,83 +1,143 @@
-// Simplified simulation class for trucks only
+#pragma once
+// Simulation class with ThreadPool integration
 #include "Log.hpp"
 #include "Station.hpp"
+#include "ThreadPool.hpp"
 #include "Truck.hpp"
 #include <iostream>
 #include <queue>
 #include <vector>
+#include <future>
 
 class TruckSim {
 private:
+  // Trucks and stations
   std::vector<Truck> m_trucks;
   std::vector<Station> m_unloadStations;
-  std::queue<Truck> m_waitingLine;
+  std::queue<Truck*> m_waitingTrucks;
   uint32_t m_numTrucks;
   uint32_t m_numStations;
   double m_currTime = 0;
-  static constexpr float dt = 1.0f; // s
-  static constexpr float SIMULATION_DURATION = 259200.0f / dt;
+  
+  // Time step variables
+  static inline constexpr float dt = 1.0f; // s
+  static inline constexpr float SIMULATION_DURATION = 259200.0f / dt;
+  
+  // Thread pool
+  ThreadPool m_threadPool;
 
 public:
-  TruckSim(int numTrucks, int numStations)
-      : m_numTrucks(numTrucks), m_numStations(numStations) {
-    // Initialize trucks and unload stations
+  TruckSim(int numTrucks, int numStations, int numThreads = 0)
+      : m_numTrucks(numTrucks), m_numStations(numStations),
+        m_threadPool(numThreads > 0 ? numThreads : std::thread::hardware_concurrency()) {
+    // Pre-allocate vectors to avoid resizing
     m_trucks.reserve(numTrucks);
     m_unloadStations.reserve(numStations);
+    
+    // Initialize trucks and unload stations
     for (int i = 0; i < numTrucks; i++) {
-      m_trucks.emplace_back(Truck(i, dt));
+      m_trucks.emplace_back(i, dt);
     }
     for (int i = 0; i < numStations; i++) {
-      m_unloadStations.emplace_back(Station(i, dt));
+      m_unloadStations.emplace_back(i, dt);
     }
+    
+    Logger::LOGI("Initialized simulation with " + std::to_string(numTrucks) + 
+                " trucks, " + std::to_string(numStations) + " stations, and " + 
+                std::to_string(m_threadPool.size()) + " worker threads");
   }
 
-  uint32_t getNumTrucks() { return m_numTrucks; }
-  uint32_t getNumStations() { return m_numStations; }
+  uint32_t getNumTrucks() const { return m_numTrucks; }
+  uint32_t getNumStations() const { return m_numStations; }
 
   void simulate() {
+    Logger::LOGI("Starting simulation...");
+    
+    // Pre-calculate constants to avoid repeated division
+    const float inv_dt = 1.0f / dt;
+    const float unloadTime = Truck::UNLOAD_TIME * inv_dt;
+    const float travelTime = Truck::TRAVEL_TIME * inv_dt;
 
     // Continue in while loop until we reach end time in increments of dt
     while (m_currTime < SIMULATION_DURATION) {
-
       m_currTime += dt;
+      
+      // Update stations (not parallelized due to potential race conditions)
       for (auto &station : m_unloadStations) {
         station.update();
       }
 
-      // Process all trucks in simulation
+      // Process trucks in parallel using the thread pool
+      std::vector<std::future<void>> updateFutures;
+      updateFutures.reserve(m_trucks.size());
+      
+      // Submit truck updates to thread pool
       for (auto &truck : m_trucks) {
-        truck.update();
-
-        // Early skip if truck doesn't need a station
-        if (truck.hasStation() || (truck.getState() != TruckState::UNLOADING && 
-            truck.getState() != TruckState::IDLE)) {
-          continue;
-        }
-
-        // If a truck is ready to unload and there is an available unload
-        // station then assign the truck to the unload station
-        if ((truck.getState() == TruckState::UNLOADING ||
-             truck.getState() == TruckState::IDLE) &&
-            truck.hasStation() == false) {
-          for (auto &station : m_unloadStations) {
-            if (station.getTruckInStation() == nullptr) {
-              // If truck was waiting and found station, move its state
-              // accordingly
-              if (truck.getState() == TruckState::IDLE) {
-                truck.setState(TruckState::UNLOADING);
-              }
-              truck.setHasStation(true);
-              station.setTruckInStation(&truck);
-              break;
-            } else {
-              truck.setState(TruckState::IDLE);
-            }
-          }
-        }
+        updateFutures.push_back(
+          m_threadPool.enqueue([&truck]() {
+            truck.update();
+          })
+        );
       }
+      
+      // Wait for all truck updates to complete
+      for (auto &future : updateFutures) {
+        future.wait();
+      }
+
+      // Maintain truck-station assignments (not parallelized due to shared resource access)
+      assignTrucksToStations();
     }
+    
     printTruckStats();
     printStationStats();
+    
+    Logger::LOGI("Simulation completed");
+  }
+
+private:
+  void assignTrucksToStations() {
+    // Collect all trucks that need a station
+    std::vector<Truck*> trucksNeedingStation;
+    
+    for (auto &truck : m_trucks) {
+      if ((truck.getState() == TruckState::UNLOADING || 
+           truck.getState() == TruckState::IDLE) && 
+          !truck.hasStation()) {
+        trucksNeedingStation.push_back(&truck);
+      }
+    }
+    
+    // Find available stations
+    std::vector<Station*> availableStations;
+    
+    for (auto &station : m_unloadStations) {
+      if (station.getTruckInStation() == nullptr) {
+        availableStations.push_back(&station);
+      }
+    }
+    
+    // Match trucks to stations efficiently
+    size_t numAssignments = std::min(trucksNeedingStation.size(), availableStations.size());
+    
+    for (size_t i = 0; i < numAssignments; ++i) {
+      Truck* truck = trucksNeedingStation[i];
+      Station* station = availableStations[i];
+      
+      // Update truck state if it was waiting
+      if (truck->getState() == TruckState::IDLE) {
+        truck->setState(TruckState::UNLOADING);
+      }
+      
+      // Assign truck to station
+      truck->setHasStation(true);
+      station->setTruckInStation(truck);
+    }
+    
+    // Set remaining trucks to IDLE if they need a station but none available
+    for (size_t i = numAssignments; i < trucksNeedingStation.size(); ++i) {
+      trucksNeedingStation[i]->setState(TruckState::IDLE);
+    }
   }
 
   void printTruckStats() {
@@ -106,7 +166,6 @@ public:
   }
 
   void printStationStats() {
-
     for (auto &station : m_unloadStations) {
       std::cout << "Station " << station.getId() << " stats:" << std::endl;
       std::cout << "Time occupied: " << station.getTimeOccupied() << std::endl;

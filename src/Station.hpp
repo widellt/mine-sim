@@ -18,35 +18,28 @@ public:
   // \param dt The time step of the simulation.
   Station(int stationId, float dt) : m_id(stationId), m_dt(dt) {}
 
-  /**
-   * \brief Retrieves the unique identifier of the station.
-   */
+  /// \brief Retrieves the unique identifier of the station.
   int getId() const { return m_id; }
 
-  /**
-   * \brief Retrieves the amount of time the station has been occupied.
-   */
+  /// \brief Retrieves the amount of time the station has been occupied.
   float getTimeOccupied() const { return m_timeOccupied; }
 
-  /**
-   * \brief Returns the pointer to the truck currently in the station
-   */
+  /// \brief Returns the pointer to the truck currently in the station
   Truck *getTruckInStation() const { return m_truckInStation; }
 
-  /**
-   * \brief Retrieves all the times a specific truck has been in the station
-   */
+  /// \brief Retrieves all the times a specific truck has been in the station
   std::unordered_map<uint32_t, float> getTruckTimes() const {
     return m_truckTimes;
   }
 
+  /// \brief Sets the pointer to the truck currently in the station
   void setTruckInStation(Truck *truck) {
     m_truckInStation = truck;
     m_timeRemaining =
         Truck::UNLOAD_TIME / m_dt; // Initialize with unload time and count down
   }
 
-  // Main function to call on each timestep for individual stations
+  /// \brief Updates the state of the station per timestep
   void update() {
     if (m_truckInStation != nullptr) {
       // Update how long a specific truck has been in a station
