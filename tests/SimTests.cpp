@@ -51,6 +51,8 @@ TEST_F(SimTest, SingleTruckSingleStation) {
     std::string output = buffer.str();
     
     // With one truck and one station, there should be no idle time
+    // NOTE: I would typically not parse the std out for this and would expose 
+    // more variables out to the truck sim class
     EXPECT_TRUE(output.find("Idle Time Total: 0s") != std::string::npos);
 }
 
