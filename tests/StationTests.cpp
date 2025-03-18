@@ -50,3 +50,28 @@ TEST_F(StationTest, StationUpdate) {
     // Truck should still be in station
     EXPECT_EQ(station->getTruckInStation(), initialTruck);
 }
+
+// Test station releasing a truck after unloading
+TEST_F(StationTest, TruckReleasing) {
+    // Set up truck to be almost done unloading
+    truck->setState(TruckState::UNLOADING);
+    // Force the unload time to be minimal
+    
+    // Assign truck to station
+    station->setTruckInStation(truck);
+    
+    // Get initial occupied time
+    float initialTimeOccupied = station->getTimeOccupied();
+    
+    // Run update until truck is released
+    while (station->getTruckInStation() != nullptr) {
+        station->update();
+        truck->update();
+    }
+    
+    // Verify the truck is released
+    EXPECT_EQ(station->getTruckInStation(), nullptr);
+    
+    // Time occupied should have increased
+    EXPECT_GT(station->getTimeOccupied(), initialTimeOccupied);
+}
