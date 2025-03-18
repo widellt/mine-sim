@@ -13,14 +13,29 @@ private:
   std::unordered_map<uint32_t, float> m_truckTimes;
 
 public:
+  // Constructor
+  // \param stationId The identifier of the station.
+  // \param dt The time step of the simulation.
   Station(int stationId, float dt) : m_id(stationId), m_dt(dt) {}
 
+  /**
+   * \brief Retrieves the unique identifier of the station.
+   */
   int getId() const { return m_id; }
 
+  /**
+   * \brief Retrieves the amount of time the station has been occupied.
+   */
   float getTimeOccupied() const { return m_timeOccupied; }
 
+  /**
+   * \brief Returns the pointer to the truck currently in the station
+   */
   Truck *getTruckInStation() const { return m_truckInStation; }
 
+  /**
+   * \brief Retrieves all the times a specific truck has been in the station
+   */
   std::unordered_map<uint32_t, float> getTruckTimes() const {
     return m_truckTimes;
   }

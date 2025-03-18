@@ -53,3 +53,30 @@ TEST_F(SimTest, SingleTruckSingleStation) {
     // With one truck and one station, there should be no idle time
     EXPECT_TRUE(output.find("Idle Time Total: 0s") != std::string::npos);
 }
+
+// Test simulation with more stations than trucks
+TEST_F(SimTest, MoreStationsThanTrucks) {
+    // Redirect stdout to capture output
+    std::stringstream buffer;
+    std::streambuf* oldCout = std::cout.rdbuf(buffer.rdbuf());
+    
+    // Run the simulation
+    sim54->simulate();
+    
+    // Restore cout
+    std::cout.rdbuf(oldCout);
+    
+    // Check output contains expected sections
+    std::string output = buffer.str();
+    
+    // Should have stats for 5 trucks
+    for (int i = 0; i < 5; i++) {
+        EXPECT_TRUE(output.find("Truck ID " + std::to_string(i)) != std::string::npos);
+    }
+    
+    // Should have stats for 4 stations
+    for (int i = 0; i < 4; i++) {
+        EXPECT_TRUE(output.find("Station " + std::to_string(i) + " stats:") != std::string::npos);
+    }
+    
+}
