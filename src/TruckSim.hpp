@@ -52,11 +52,6 @@ public:
 
   void simulate() {
     Logger::LOGI("Starting simulation...");
-    
-    // Pre-calculate constants to avoid repeated division
-    const float inv_dt = 1.0f / dt;
-    const float unloadTime = Truck::UNLOAD_TIME * inv_dt;
-    const float travelTime = Truck::TRAVEL_TIME * inv_dt;
 
     // Continue in while loop until we reach end time in increments of dt
     while (m_currTime < SIMULATION_DURATION) {
